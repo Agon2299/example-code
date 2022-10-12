@@ -1,0 +1,72 @@
+version: '2.1'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    command: nginx -g "daemon off;"
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - php
+    volumes:
+      - ./storage:/srv/www/app/storage/
+      - ./public/vendor:/srv/www/app/public/vendor
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    command: bash -c "php artisan cache:clear && (./docker/cron.sh & php artisan queue:work --tries=3 -vvv & php-fpm -RF)"
+    restart: always
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_DATABASE=riv
+      - DB_USERNAME=riv
+      - DB_PASSWORD=riv
+      - APP_URL=http://riv.test
+      - SMSRU_API_ID="F7E614A2-963C-032E-A78D-CAA30749EA07"
+      - NUTNET_SMS_PROVIDER="smsru"
+      - FCM_SECRET_KEY="AAAAB4sPSbI:APA91bFP25mFRqvOyrsm9huAEuzlEXzs8-ALesTJ90X8L3U062eQB5mqGiDjKo3eDi4Ao7RtFlmm9543c5I3hLlUow7ojBg0sW8EzkVlMsN6m3Ujicii4hNLSMiASVEecSO30CMvX1zH"
+    volumes:
+      - ./storage:/srv/www/app/storage/
+      - ./docker.local/php7.4.ini:/usr/local/etc/php/php.ini
+      - ./:/srv/www/app
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    image: redis:3.2.11-alpine
+    restart: always
+
+  postgres:
+    image: postgres:12.4-alpine
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=riv
+      - POSTGRES_USER=riv
+      - POSTGRES_PASSWORD=riv
+
+networks:
+  default:
+    external:
+      name: riv
+
+volumes:
+  certs:
+  vhost.d:
+  html:
+  storage:
+    driver: local
+  system-tmp:
+    driver: local
+  postgres:
+    driver: local

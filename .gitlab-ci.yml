@@ -1,0 +1,48 @@
+image: docker:latest
+
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+
+services:
+  - docker:19.03.14-dind
+
+
+stages:
+  - build
+  - deploy
+
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - export COMPOSE_HTTP_TIMEOUT=120
+
+build:
+  stage: build
+  script:
+    - docker build --cache-from instadevteam/riv-back-php:latest -t instadevteam/riv-back-php:latest -t instadevteam/riv-back-php:$CI_COMMIT_SHA -f docker/php/Dockerfile .
+    - docker build --cache-from instadevteam/riv-back-nginx:latest -t instadevteam/riv-back-nginx:latest -t instadevteam/riv-back-nginx:$CI_COMMIT_SHA -f docker/nginx/Dockerfile .
+    - docker push instadevteam/riv-back-php:$CI_COMMIT_SHA
+    - docker push instadevteam/riv-back-nginx:$CI_COMMIT_SHA
+    - docker push instadevteam/riv-back-php:latest
+    - docker push instadevteam/riv-back-nginx:latest
+  only:
+    - dev
+  tags:
+    - riv
+
+deploy:
+  stage: deploy
+  tags: 
+    - nc
+  only:
+    - dev
+  before_script:
+    - mkdir -p ~/.ssh
+    - echo "$DEPLOY_SERVER_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - ssh-keyscan -H $DEPLOYMENT_SERVER_IP >> ~/.ssh/known_hosts
+  script:
+    - scp ./docker-compose.yml root@${DEPLOYMENT_SERVER_IP}:/home/anduin/riv
+    - ssh root@$DEPLOYMENT_SERVER_IP "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}; cd /home/anduin/riv; docker-compose -f docker-compose.yml rm --force; docker-compose -f ./docker-compose.yml pull; docker-compose -f ./docker-compose.yml up -d;"

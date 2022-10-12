@@ -1,0 +1,78 @@
+version: '2.1'
+
+services:
+  nginx:
+    image: instadevteam/riv-back-nginx:latest
+    command: nginx -g "daemon off;"
+    restart: always
+    networks:
+      - riv
+      - nc
+    ports:
+      - 80
+    depends_on:
+      - php
+    volumes:
+      - storage:/srv/www/app/storage/app
+      - public:/srv/www/app/public
+    environment:
+      VIRTUAL_HOST: riviera-dev.instadev.ru # домен проекта
+      LETSENCRYPT_HOST: riviera-dev.instadev.ru
+      LETSENCRYPT_EMAIL: demo@test.com
+
+  php:
+    image: instadevteam/riv-back-php:latest
+    command: bash -c "php artisan migrate && php artisan cache:clear && php artisan config:cache && (./docker/cron.sh & php artisan queue:work --tries=3 -vvv & php-fpm -RF)"
+    restart: always
+    networks:
+      - riv
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_DATABASE=riv
+      - DB_USERNAME=riv
+      - DB_PASSWORD=riv
+      - APP_URL=https://riviera-dev.instadev.ru
+      - SMSRU_API_ID="F7E614A2-963C-032E-A78D-CAA30749EA07"
+      - NUTNET_SMS_PROVIDER="smsru"
+      - FCM_SECRET_KEY="AAAAB4sPSbI:APA91bFP25mFRqvOyrsm9huAEuzlEXzs8-ALesTJ90X8L3U062eQB5mqGiDjKo3eDi4Ao7RtFlmm9543c5I3hLlUow7ojBg0sW8EzkVlMsN6m3Ujicii4hNLSMiASVEecSO30CMvX1zH"
+    volumes:
+      - storage:/srv/www/app/storage/app
+      - public:/srv/www/app/public
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    image: redis:3.2.11-alpine
+    restart: always
+    networks:
+      - riv
+
+  postgres:
+    image: postgres:12.4-alpine
+    networks:
+      - riv
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=riv
+      - POSTGRES_USER=riv
+      - POSTGRES_PASSWORD=riv
+
+networks:
+  nc:
+    external:
+      name: nc
+  riv:
+
+volumes:
+  storage:
+    driver: local
+  public:
+    driver: local
+  postgres:
+    driver: local

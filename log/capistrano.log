@@ -1,0 +1,21 @@
+# Logfile created on 2020-10-29 18:33:51 +0300 by logger.rb/v1.4.2
+  INFO ---------------------------------------------------------------------------
+  INFO START 2020-10-29 18:33:51 +0300 cap production deploy
+  INFO ---------------------------------------------------------------------------
+  INFO [f8535a0c] Running /usr/bin/env mkdir -p /tmp as deployer@185.137.232.64
+ DEBUG [f8535a0c] Command: /usr/bin/env mkdir -p /tmp
+  INFO ---------------------------------------------------------------------------
+  INFO START 2020-10-30 16:19:46 +0300 cap production deploy
+  INFO ---------------------------------------------------------------------------
+  INFO [5469920c] Running /usr/bin/env mkdir -p /tmp as deployer@185.137.232.64
+ DEBUG [5469920c] Command: /usr/bin/env mkdir -p /tmp
+  INFO ---------------------------------------------------------------------------
+  INFO START 2020-10-30 16:37:58 +0300 cap production deploy
+  INFO ---------------------------------------------------------------------------
+  INFO [08d454c4] Running /usr/bin/env mkdir -p /tmp as deployer@185.137.232.64
+ DEBUG [08d454c4] Command: /usr/bin/env mkdir -p /tmp
+  INFO ---------------------------------------------------------------------------
+  INFO START 2020-10-30 16:42:03 +0300 cap production deploy
+  INFO ---------------------------------------------------------------------------
+  INFO [8890d2ee] Running /usr/bin/env mkdir -p /tmp as deployer@185.137.232.64
+ DEBUG [8890d2ee] Command: /usr/bin/env mkdir -p /tmp

@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'not_found_mobile_user' => '%exp% Mobile user not found',
+    'not_found_referral_mobile_user'     => '%exp% Referral user not found',
+    'not_found_transactions'     => '%exp% Not found transactions',
+    'not_found_event' => '%exp% Event not found',
+    'event_coast_more_mobile_user_point' => 'У вас недостаточно баллов %exp% Для регистрации на данное мероприятие вам не хватает :countPoint :world',
+    'event_exists' => 'There is already such an event',
+    'not_found_offer' => '%exp% Offer not found',
+    'offer_coast_more_mobile_user_point' => 'У вас недостаточно баллов %exp% Для совершения покупки данного предложения вам не хватает :countPoint :world',
+    'offer_exists' => '%exp% Такое предложение уже есть',
+    'activated_offer_welcome_offer' => '%exp% Такое предложение уже было использовано. Оно даётся один раз.',
+    'has_check' => 'Данный чек уже был предъявлен %exp% Чек был отсканирован ранее',
+    'check_limit' => 'Спасибо, что делаете покупки в Ривьере. %exp% Пожалуйста, отправьте фото чека на support@riviera.su. Мы начислим вам баллы в ближайшее время.',
+    'more_hours_that_day' => 'Чек просрочен %exp% Для начисления бонусов используйте чеки, с момента выдачи которых прошло не более 24 часов',
+    'more_hours' => 'Ошибка %exp% Некорректные данные в поле «Дата и время чека»',
+    'empty_cashback' => 'Ой… %exp% Этот арендатор пока не участвует в программе лояльности',
+    'not_found_cashbox' => 'Ой… %exp% Этот арендатор пока не участвует в программе лояльности',
+    'check_cashbox_not_work' => 'Чек не найден %exp% Чек с таким номером кассы не найден',
+    'diff_sms_code' => '%exp% Смс код не совпал',
+    'transactions_exists' => '%exp% Уже есть такая транзакция',
+    'empty_mobile_user_email' => '%exp% Нет данных в поле почта',
+    'empty_mobile_user_name' => '%exp% Нет данных в поле Имя',
+    'count_many' => 'Отказ %exp% К сожалению, подарки закончились.',
+];
